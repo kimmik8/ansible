@@ -1,0 +1,28 @@
+---
+- name: Creating Group of Sudo Users  
+  hosts: skillfactory
+    gather_facts: no
+    become: yes
+
+  tasks:
+    - name: Create group
+      group:
+        name: superuser
+        state: present
+    
+    - name: Create users
+        user:
+          name: user2
+          state: present
+          group: superuser
+          name: user3
+          state: present
+          group: superuser
+
+    - name: Give sudo access
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%superuser'
+        line: '%superuser ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
